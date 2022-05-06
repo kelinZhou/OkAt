@@ -1,6 +1,6 @@
 package com.kelin.okat.callback
 
-import com.kelin.okat.AtReceiver
+import com.kelin.okat.receiver.AtReceiver
 import com.kelin.okat.AtTarget
 
 /**

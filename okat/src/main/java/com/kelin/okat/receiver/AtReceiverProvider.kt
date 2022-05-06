@@ -1,4 +1,5 @@
-package com.kelin.okat
+package com.kelin.okat.receiver
+
 
 
 /**
@@ -10,8 +11,6 @@ package com.kelin.okat
  *
  * **版本:** v 1.0.0
  */
-interface AtReceiver {
-    fun receive(target: AtTarget)
-
-    fun receive(targets: List<AtTarget>)
+interface AtReceiverProvider {
+    val receiver: AtReceiver?
 }

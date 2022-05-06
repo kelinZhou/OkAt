@@ -30,6 +30,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etContent" />
 
+    <Button
+        android:id="@+id/btnAt"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
+        android:padding="10dp"
+        android:text="添加 \@"
+        app:layout_goneMarginStart="16dp"
+        app:layout_constraintLeft_toRightOf="@id/btnGetReal"
+        app:layout_constraintTop_toBottomOf="@id/etContent" />
+
     <TextView
         android:id="@+id/tvTargets"
         android:layout_width="0dp"

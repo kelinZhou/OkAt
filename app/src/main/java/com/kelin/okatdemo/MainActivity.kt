@@ -7,7 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import com.kelin.okat.AtMapper
 import com.kelin.okat.AtTarget
-import com.kelin.okat.AtReceiver
+import com.kelin.okat.receiver.AtReceiver
 import com.kelin.okat.OkAt
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        OkAt.attach<TestTarget>(etContent, AtMapper("#", "<#>"), AtMapper("#", "<#>")).run {
+        OkAt.attach<TestTarget>(etContent/*, AtMapper("#", "<#>"), AtMapper("#", "<#>")*/).run {
             doAfterInputAt {
                 onSelectContactsToAt(it)
             }
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
         btnGetReal.setOnClickListener {
             tvReal.text = OkAt.getRealText(etContent)?.also {
-                OkAt.setText(tvDisplay, it, AtMapper("#", "<#>"), AtMapper("#", "<#>")){ target ->
+                OkAt.setText(tvDisplay, it/*, AtMapper("#", "<#>"), AtMapper("#", "<#>")*/){ target ->
                     Toast.makeText(this, "您点击了${target.text}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d("==========", it.text)
             }
         }
+
+        btnAt.setOnClickListener { OkAt.addAtTarget(etContent, testTargets[random.nextInt(testTargets.size)]) }
     }
 
     override fun onDestroy() {

@@ -13,6 +13,8 @@ import androidx.core.text.toSpannable
 import com.kelin.okat.callback.OkAtTextWatcher
 import com.kelin.okat.callback.OkAtHandler
 import com.kelin.okat.callback.OkAtHandlerDelegate
+import com.kelin.okat.receiver.AtReceiverProvider
+import com.kelin.okat.receiver.AtReceiverProviderWrapper
 
 /**
  * **描述:** 输入框中的@支持帮助者
@@ -35,6 +37,8 @@ object OkAt {
     const val REASON_REMOVED = 0x02
 
     private val atMapperPool = HashMap<Int, AtConfig>()
+
+    private val atReceiverProviderPool = HashMap<Int, AtReceiverProvider>()
 
     @Throws(NullPointerException::class)
     fun getPrefixAtMapper(targetView: View): AtMapper {
@@ -83,8 +87,19 @@ object OkAt {
                 false
             }
         }
-        targetView.addTextChangedListener(OkAtTextWatcher(config, callback))
+        targetView.addTextChangedListener(OkAtTextWatcher(config, callback).also {
+            atReceiverProviderPool[targetView.hashCode()] = AtReceiverProviderWrapper(targetView, config, it)
+        })
         return callback
+    }
+
+    /**
+     * 向目标组件中添加一个At。
+     * @param targetView 目标组件。
+     * @param target 要添加的Target。
+     */
+    fun addAtTarget(targetView: EditText, target: AtTarget) {
+        atReceiverProviderPool[targetView.hashCode()]?.receiver?.receive(target)
     }
 
     /**
@@ -92,6 +107,7 @@ object OkAt {
      */
     fun detach(targetView: View) {
         atMapperPool.remove(targetView.hashCode())
+        atReceiverProviderPool.remove(targetView.hashCode())
     }
 
     fun getRealText(targetView: EditText): String? {
