@@ -14,7 +14,7 @@ import com.kelin.okat.AtTargetSpan
  *
  * **版本:** v 1.0.0
  */
-class AtReceiveHandler (private val config: AtConfig, private val editable: Editable?, private val where: Int, private val selectedCount: Int) : AtReceiver {
+class AtReceiveHandler(private val config: AtConfig, private val editable: Editable?, private val where: Int, private val selectedCount: Int) : AtReceiver {
 
     override fun receive(target: AtTarget) {
         if (editable != null) {

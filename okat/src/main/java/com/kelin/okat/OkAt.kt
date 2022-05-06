@@ -103,6 +103,15 @@ object OkAt {
     }
 
     /**
+     * 向目标组件中一次性添加多个At。
+     * @param targetView 目标组件。
+     * @param targets 要添加的所有Target。
+     */
+    fun addAtTarget(targetView: EditText, targets: List<AtTarget>) {
+        atReceiverProviderPool[targetView.hashCode()]?.receiver?.receive(targets)
+    }
+
+    /**
      * 为一个支持OkAt的View解除关联，释放资源。
      */
     fun detach(targetView: View) {
