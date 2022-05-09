@@ -21,7 +21,7 @@ import java.lang.Exception
 class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val target: T) : DataBindingSpan<T> {
 
     companion object {
-        private const val separator = "<}{>"
+        private const val separator = "｜"
         fun parse(config: AtConfig, res: String): CharSequence {
             return res.split(separator).let {
                 try {
