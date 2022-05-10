@@ -25,7 +25,7 @@ class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val targe
         fun parse(config: AtConfig, res: String): CharSequence {
             return res.split(separator).let {
                 try {
-                    AtTargetSpan(config, DefAtTarget(it[1], it[0], it[2].toInt())).spannedText
+                    AtTargetSpan(config, DefAtTarget(it[1].trim(), it[0].trim(), it[2].trim().toInt())).spannedText
                 } catch (e: Exception) {
                     res
                 }
