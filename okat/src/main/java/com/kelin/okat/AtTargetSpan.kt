@@ -27,7 +27,7 @@ class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val targe
                 try {
                     AtTargetSpan(config, DefAtTarget(it[1], it[0], it[2].toInt())).spannedText
                 } catch (e: Exception) {
-                    throw IllegalArgumentException(e)
+                    res
                 }
             }
         }
