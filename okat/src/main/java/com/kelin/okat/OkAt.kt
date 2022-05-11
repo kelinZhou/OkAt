@@ -1,6 +1,8 @@
 package com.kelin.okat
 
+import android.content.Context
 import android.graphics.Color
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -31,6 +33,9 @@ object OkAt {
      */
     const val REASON_ADD = 0x01
 
+    private val defPrefix = AtMapper("@", "⊞﹫")
+    private val defSuffix = AtMapperNull()
+
     /**
      * 移除一个At。
      */
@@ -39,16 +44,6 @@ object OkAt {
     private val atMapperPool = HashMap<Int, AtConfig>()
 
     private val atReceiverProviderPool = HashMap<Int, AtReceiverProvider>()
-
-    @Throws(NullPointerException::class)
-    fun getPrefixAtMapper(targetView: View): AtMapper {
-        return atMapperPool[targetView.hashCode()]?.prefix ?: throw NullPointerException("The AtMapper not found!")
-    }
-
-    @Throws(NullPointerException::class)
-    fun getSuffixAtMapper(targetView: View): AtMapper {
-        return atMapperPool[targetView.hashCode()]?.suffix ?: throw NullPointerException("The AtMapper not found!")
-    }
 
     internal fun getAtConfig(targetView: View): AtConfig? {
         return atMapperPool[targetView.hashCode()]
@@ -63,8 +58,8 @@ object OkAt {
     @Throws(IllegalArgumentException::class)
     fun <T : AtTarget> attach(
         targetView: EditText,
-        prefix: AtMapper = AtMapper("@", "#﹫#"),
-        suffix: AtMapper = AtMapperNull(),
+        prefix: AtMapper = defPrefix,
+        suffix: AtMapper = defSuffix,
         @ColorInt atColor: Int = ContextCompat.getColor(targetView.context, R.color.colorAccent)
     ): OkAtHandler<T> {
         return attach(targetView, AtConfig(atColor, prefix, suffix))
@@ -174,8 +169,8 @@ object OkAt {
     fun setText(
         targetView: TextView,
         text: String?,
-        prefix: AtMapper = AtMapper("@", "#﹫#"),
-        suffix: AtMapper = AtMapperNull(),
+        prefix: AtMapper = defPrefix,
+        suffix: AtMapper = defSuffix,
         @ColorInt atColor: Int = ContextCompat.getColor(targetView.context, R.color.colorAccent),
         targetClickListener: ((target: AtTarget) -> Unit)? = null
     ) {
@@ -197,6 +192,56 @@ object OkAt {
                     result.replace(index, index + r.value.length, AtTargetSpan.parse(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
                 }
                 targetView.text = result.toSpannable()
+            }
+        }
+    }
+
+    fun getDisplayFromReal(
+        context: Context,
+        text: String?,
+        prefix: AtMapper = defPrefix,
+        suffix: AtMapper = defSuffix,
+        @ColorInt atColor: Int = ContextCompat.getColor(context, R.color.colorAccent)
+    ): Spannable? {
+        return getDisplayFromReal(text, AtConfig(atColor, prefix, suffix))
+    }
+
+    fun getDisplayFromReal(
+        text: String?,
+        config: AtConfig
+    ): Spannable? {
+        return text?.let {
+            Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text).let {
+                val result = SpannableStringBuilder(text)
+                it.forEach { r ->
+                    val index = result.indexOf(r.value)
+                    result.replace(index, index + r.value.length, AtTargetSpan.parse(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
+                }
+                result.toSpannable()
+            }
+        }
+    }
+
+    fun getDisplayTextFromReal(
+        text: String?,
+        prefix: AtMapper = defPrefix,
+        suffix: AtMapper = defSuffix,
+    ): String? {
+        return getDisplayTextFromReal(text, AtConfig(0, prefix, suffix))
+    }
+
+    fun getDisplayTextFromReal(
+        text: String?,
+        config: AtConfig
+    ): String? {
+        return text?.let {
+            Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text).let {
+                val result = StringBuilder(text)
+                it.forEach { r ->
+                    val index = result.indexOf(r.value)
+                    result.replace(index, index + r.value.length, AtTargetSpan.parseDisplayText(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
+                }
+                result.toString()
             }
         }
     }

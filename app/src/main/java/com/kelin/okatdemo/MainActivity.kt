@@ -42,9 +42,10 @@ class MainActivity : AppCompatActivity() {
         }
         btnGetReal.setOnClickListener {
             tvReal.text = OkAt.getRealText(etContent)?.also {
-                OkAt.setText(tvDisplay, it/*, AtMapper("#", "<#>"), AtMapper("#", "<#>")*/){ target ->
-                    Toast.makeText(this, "您点击了${target.text}", Toast.LENGTH_SHORT).show()
-                }
+                tvDisplay.text = OkAt.getDisplayTextFromReal(it).toString()
+//                OkAt.setText(tvDisplay, it/*, AtMapper("#", "<#>"), AtMapper("#", "<#>")*/){ target ->
+//                    Toast.makeText(this, "您点击了${target.text}", Toast.LENGTH_SHORT).show()
+//                }
             }
             OkAt.getAtTargets(tvDisplay).forEach {
                 Log.d("==========", it.text)

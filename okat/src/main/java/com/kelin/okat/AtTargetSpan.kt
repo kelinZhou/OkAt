@@ -27,7 +27,17 @@ class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val targe
                 try {
                     AtTargetSpan(config, DefAtTarget(it[1].trim(), it[0].trim(), it[2].trim().toInt())).spannedText
                 } catch (e: Exception) {
-                    res
+                    "${config.prefix.display}${res}${config.suffix.display}"
+                }
+            }
+        }
+
+        fun parseDisplayText(config: AtConfig, res: String): String {
+            return res.split(separator).let {
+                try {
+                    "${config.prefix.display}${it[0].trim()}${config.suffix.display}"
+                } catch (e: Exception) {
+                    "${config.prefix.display}${res}${config.suffix.display}"
                 }
             }
         }
