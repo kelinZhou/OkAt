@@ -122,23 +122,27 @@ object OkAt {
                     text.contains(config.prefix.display) -> {
                         val result = StringBuilder(text.toString())
                         //先获取所有的Span然后降序遍历进行文本替换，注意：一定必须要降序遍历，否则当显示前后缀与真实前后缀字符长度不一致是将会导致Bug。
-                        text.getSpans(0, text.length, DataBindingSpan::class.java)?.reversed()?.forEach { span ->
-                            val start = text.getSpanStart(span)
-                            val end = text.getSpanEnd(span)
-                            result.replace(
-                                start,
-                                end,
-                                text.substring(start, end).let { target ->
-                                    if (config.theSameBothEnds) {
-                                        StringBuilder(target).apply {
-                                            replace(0, config.prefix.display.length, config.prefix.real)
-                                            replace(length - config.suffix.display.length, length, span.getRealSuffix(config.suffix.real))
-                                        }.toString()
-                                    } else {
-                                        target.replace(config.prefix.display, config.prefix.real).replace(config.suffix.display, span.getRealSuffix(config.suffix.real))
+                        text.getSpans(0, text.length, DataBindingSpan::class.java)?.also { spans ->
+                            spans.sortByDescending { text.getSpanStart(it) }
+                            spans.forEach { span ->
+                                //下面的start和end不能直接获取 span.spanStart 或 span.spanEnd text的内容会不停的变动。
+                                val start = text.getSpanStart(span)
+                                val end = text.getSpanEnd(span)
+                                result.replace(
+                                    start,
+                                    end,
+                                    text.substring(start, end).let { target ->
+                                        if (config.theSameBothEnds) {
+                                            StringBuilder(target).apply {
+                                                replace(0, config.prefix.display.length, config.prefix.real)
+                                                replace(length - config.suffix.display.length, length, span.getRealSuffix(config.suffix.real))
+                                            }.toString()
+                                        } else {
+                                            target.replace(config.prefix.display, config.prefix.real).replace(config.suffix.display, span.getRealSuffix(config.suffix.real))
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                         result.toString()
                     }
