@@ -181,23 +181,15 @@ object OkAt {
         setText(targetView, text, AtConfig(atColor, prefix, suffix).apply { onTargetClickListener = targetClickListener })
     }
 
-    fun setText(targetView: TextView, text: String?, config: AtConfig) {
+    fun setText(targetView: TextView, text: String?, config: AtConfig, targetClickListener: ((target: AtTarget) -> Unit)? = null) {
+        config.onTargetClickListener = targetClickListener
         if (config.isTargetClickable) {
             targetView.run {
                 movementMethod = LinkMovementMethod()
                 highlightColor = Color.TRANSPARENT
             }
         }
-        if (!text.isNullOrEmpty()) {
-            Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text).let {
-                val result = SpannableStringBuilder(text)
-                it.forEach { r ->
-                    val index = result.indexOf(r.value)
-                    result.replace(index, index + r.value.length, AtTargetSpan.parse(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
-                }
-                targetView.text = result.toSpannable()
-            }
-        }
+        targetView.text = getDisplayFromReal(text, config)
     }
 
     fun getDisplayFromReal(
@@ -215,11 +207,11 @@ object OkAt {
         config: AtConfig
     ): Spannable? {
         return text?.let {
-            Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text).let {
+            findAllTargetText(config, text).let {
                 val result = SpannableStringBuilder(text)
                 it.forEach { r ->
                     val index = result.indexOf(r.value)
-                    result.replace(index, index + r.value.length, AtTargetSpan.parse(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
+                    result.replace(index, index + r.value.length, AtTargetSpan.parse(config, r.value))
                 }
                 result.toSpannable()
             }
@@ -239,14 +231,16 @@ object OkAt {
         config: AtConfig
     ): String? {
         return text?.let {
-            Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text).let {
+            findAllTargetText(config, text).let {
                 val result = StringBuilder(text)
                 it.forEach { r ->
                     val index = result.indexOf(r.value)
-                    result.replace(index, index + r.value.length, AtTargetSpan.parseDisplayText(config, r.value.replace(config.prefix.real, "").replace(config.suffix.real, "")))
+                    result.replace(index, index + r.value.length, AtTargetSpan.parseDisplayText(config, r.value))
                 }
                 result.toString()
             }
         }
     }
+
+    private fun findAllTargetText(config: AtConfig, text: String) = Regex("""${config.prefix.real}.*?${config.suffix.real}""").findAll(text)
 }

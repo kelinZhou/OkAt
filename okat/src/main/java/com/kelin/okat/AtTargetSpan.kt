@@ -23,7 +23,7 @@ class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val targe
     companion object {
         private const val separator = "｜"
         fun parse(config: AtConfig, res: String): CharSequence {
-            return res.split(separator).let {
+            return targetToReal(config, res).split(separator).let {
                 try {
                     AtTargetSpan(config, DefAtTarget(it[1].trim(), it[0].trim(), it[2].trim().toInt())).spannedText
                 } catch (e: Exception) {
@@ -33,13 +33,17 @@ class AtTargetSpan<T : AtTarget>(private val config: AtConfig, private val targe
         }
 
         fun parseDisplayText(config: AtConfig, res: String): String {
-            return res.split(separator).let {
+            return targetToReal(config, res).split(separator).let {
                 try {
                     "${config.prefix.display}${it[0].trim()}${config.suffix.display}"
                 } catch (e: Exception) {
                     "${config.prefix.display}${res}${config.suffix.display}"
                 }
             }
+        }
+
+        private fun targetToReal(config: AtConfig, target: String): String {
+            return target.replace(config.prefix.real, "").replace(config.suffix.real, "")
         }
     }
 
