@@ -178,7 +178,7 @@ object OkAt {
         @ColorInt atColor: Int = ContextCompat.getColor(targetView.context, R.color.colorAccent),
         targetClickListener: ((target: AtTarget) -> Unit)? = null
     ) {
-        setText(targetView, text, AtConfig(atColor, prefix, suffix).apply { onTargetClickListener = targetClickListener })
+        setText(targetView, text, AtConfig(atColor, prefix, suffix), targetClickListener)
     }
 
     fun setText(targetView: TextView, text: String?, config: AtConfig, targetClickListener: ((target: AtTarget) -> Unit)? = null) {
